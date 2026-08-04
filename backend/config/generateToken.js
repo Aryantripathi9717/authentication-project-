@@ -1,11 +1,8 @@
 import jwt from "jsonwebtoken"
 
-export const generateWebToken = async (id)=>{
-    try {
-        await jwt.sign({id},process.env.JWT_SECRETE,{
-            expiresIn : "7d"
-        })
-    } catch (error) {
-        console.log("Token Generation Error")
-    }
+export const generateWebToken = (id) => {
+    let token = jwt.sign({id},process.env.JWT_SECRETE, {
+        expiresIn : "7d"
+    })
+    return token
 }

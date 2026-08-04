@@ -4,6 +4,7 @@ import appRouter from "./routes/app.route.js"
 import dns from "dns"
 import { connectDB } from "./config/db.js"
 import cors from "cors"
+import cookieParser from "cookie-parser"
 
 let app = express()
 dotenv.config()
@@ -17,6 +18,7 @@ app.use(cors({
     credentials : true
 }))
 app.use(express.json())
+app.use(cookieParser())
 app.use("/api",appRouter);
 
 app.get("/",(req,res)=>{

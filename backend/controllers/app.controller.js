@@ -108,7 +108,7 @@ export const login = async (req,res) => {
     })
     
   } catch (error) {
-    res.status(400).json({message : message.error})
+    res.status(400).json({message : error.message})
   }
 }
 
@@ -125,4 +125,20 @@ export const logout = async (req,res)=>{
   } catch (error) {
     return res.status(400).json({message : error.message})
   }
+}
+
+export const getUserData = async (req,res)=>{
+    try{
+        let userId = req.userId
+        if(!userId){
+            return res.status(400).json({message : "user id is not found"})
+        }
+        let user = await User.findById(userId)
+        if(!user){
+            return res.status(400).json({message : "user not found"})
+        }
+        return res.status(200).json(user)
+    }catch (error){
+        return res.status(500).json({message : error})
+    }
 }

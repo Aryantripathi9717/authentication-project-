@@ -7,7 +7,7 @@ const Login = () => {
     let [email,setEmail] = useState("")
     let [password,setPassword] = useState("")
 
-    let {serverUrl} = useContext(dataContext)
+    let {serverUrl,getUserData,setUserData} = useContext(dataContext)
 
     let handleLogin = async (e)=>{
         e.preventDefault()
@@ -18,6 +18,8 @@ const Login = () => {
         },{
             withCredentials : true
         })
+        setUserData(data.user)
+        await getUserData()
         console.log(data)
       } catch (error) {
         console.log(error)

@@ -2,6 +2,7 @@ import React, { useContext, useRef, useState } from 'react'
 import image from  '../assets/emptyprofile.webp'
 import { dataContext } from '../context/UserContext'
 import axios from "axios"
+import { useNavigate } from 'react-router-dom'
 
 const Signup = () => {
   
@@ -13,7 +14,8 @@ const Signup = () => {
     let [email,setEmail] = useState("")
     let [password,setPassword] = useState("")
 
-    let {serverUrl} = useContext(dataContext)
+    let {serverUrl,getUserData,setUserData} = useContext(dataContext)
+    let navigate = useNavigate()
 
     let handleSignup = async (e)=>{
         e.preventDefault()
@@ -30,6 +32,9 @@ const Signup = () => {
             withCredentials : true,
             headers : {'Content-Type' : "multipart/form-data"}
         })
+        setUserData(data.user)
+        await getUserData()
+        navigate("/")
         console.log(data)
       } catch (error) {
         console.log(error)
@@ -48,7 +53,7 @@ const Signup = () => {
       setFrontendImage(realImage)
     }
     
-
+      
   return (
     <div className='h-screen w-screen flex justify-center items-center bg-black'>
         <div className='h-[500px] w-[450px] bg-slate-900  flex flex-col justify-center items-center gap-0'>
