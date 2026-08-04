@@ -1,9 +1,11 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useRef, useState } from 'react'
 import image from  '../assets/emptyprofile.webp'
 import { dataContext } from '../context/UserContext'
 import axios from "axios"
 
 const Signup = () => {
+  
+    let file = useRef(null)
 
     let [firstName,setFirstName] = useState("")
     let [lastName,setLastName] = useState("")
@@ -16,20 +18,34 @@ const Signup = () => {
     let handleSignup = async (e)=>{
         e.preventDefault()
       try {
-        let {data} = await axios.post(serverUrl + "/api/signup",{
-            firstName,
-            lastName,
-            userName,
-            email,
-            password
-        },{
-            withCredentials : true
+        let formData = new FormData()
+        formData.append("firstName",firstName)
+        formData.append("lastName", lastName)
+        formData.append("userName",userName)
+        formData.append("email",email)
+        formData.append("password",password)
+        if(backendImage)
+        formData.append("profileImage",backendImage)
+        let {data} = await axios.post(serverUrl + "/api/signup",formData,{
+            withCredentials : true,
+            headers : {'Content-Type' : "multipart/form-data"}
         })
         console.log(data)
       } catch (error) {
         console.log(error)
       }
         
+    }
+
+    let [frontendImage,setFrontendImage] = useState(image)
+    let [backendImage,setBackendImage] = useState(null)
+    function handleImage(e){
+      console.log(e.target.files[0])
+
+      let img = e.target.files[0]
+      setBackendImage(img)
+      let realImage = URL.createObjectURL(img)
+      setFrontendImage(realImage)
     }
     
 
@@ -38,8 +54,10 @@ const Signup = () => {
         <div className='h-[500px] w-[450px] bg-slate-900  flex flex-col justify-center items-center gap-0'>
             <form action="" className='gap-5 w-full h-full flex flex-col justify-center items-center' onSubmit={handleSignup}>
                 <div className='w-[120px] h-[120px] rounded-full bg-white overflow-hidden relative'>
-                    <img src={image} alt=""  />
-                    <div className='text-black h-full w-full text-4xl absolute top-9 left-12 opacity-0 hover:opacity-100 '>+</div>
+                  <input type="file" hidden ref={file} onChange={handleImage} />
+                    <img src={frontendImage} alt=""  />
+                    {frontendImage === image ? <div className='text-black h-full w-full text-4xl absolute top-9 left-12 opacity-0 hover:opacity-100 '
+                    onClick={()=>{file.current.click()}}>+</div> : null}
                 </div>
                 <div className='w-full flex justify-center items-center gap-3'>
                     <input type="text" placeholder='firstName' className='outline-none w-[45%] h-8 p-2' value={firstName} onChange={(e)=>{setFirstName(e.target.value)}}/>
